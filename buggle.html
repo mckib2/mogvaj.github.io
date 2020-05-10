@@ -79,6 +79,19 @@
           </audio>
         </div>
       </div>
+
+      <hr>
+
+      <div class="container">
+        <div class="row justify-content-md-center">
+          <div class="col-4 input-group">
+            <input type="text" class="form-control" id="word-to-lookup" placeholder="Verify Word" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="handleWordLookup();">Button</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -228,6 +241,30 @@
               elapsedSeconds++;
             }
           }, 1000);
+        }
+      }
+
+      function sanitizeString(str) {
+        // Get rid of icky (potentially dangerous) chracters
+        str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, '');
+        return str.trim();
+      }
+
+      // Waiting on API key from wordnik
+      function handleWordLookup() {
+        var wordVal = document.getElementById('word-to-lookup').value;
+        wordVal = sanitizeString(wordVal);
+        if (wordVal !== '') {
+          const myHeaders = new Headers();
+          const myRequest = new Request(`https://wordnik.com/word.json/${wordVal}/scrabbleScore`, {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'no-cors',
+            cache: 'default',
+          });
+          fetch(myRequest)
+          .then(response => response.json())
+          .then(data => console.log(data));
         }
       }
     </script>
